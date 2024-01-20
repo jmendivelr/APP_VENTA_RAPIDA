@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://schemas.microsoft.com/dotnet/2021/maui/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:LoginApp.Maui"
+             x:Class="LoginApp.Maui.Views.VentaRapidaMayPage"
+             Title="Venta Por Mayor">
+
+    <StackLayout>
+
+        <!-- Otros elementos de tu interfaz de usuario -->
+
+        <!-- Botón para escanear código de barras con Xamarin.Essentials -->
+
+
+        <!--<Label Text="Venta Rapida" FontSize="Large" HorizontalOptions="CenterAndExpand" Margin="0,20,0,10"/>-->
+        <ContentView x:Name="popupViewFinalizaVenta" IsVisible="False" BackgroundColor="Transparent" Padding="10">
+            <!-- Contenido de la "ventana emergente" -->
+            <StackLayout>
+
+                <Button Text="Cancelar" FontSize="Medium" Clicked="CancelarPopupFinalizaVenta" />
+                <!-- ComboBox para seleccionar DNI o RUC -->
+                <!-- Picker para seleccionar DNI o RUC -->
+                <Picker x:Name="tipoDocumentoPicker">
+                    <Picker.Items>
+                        <x:String>DNI</x:String>
+                        <x:String>RUC</x:String>
+                    </Picker.Items>
+                </Picker>
+
+
+                <!-- Caja de texto para el DNI -->
+                <Entry x:Name="dniEntry" Placeholder="DNI" />
+
+                <!-- Caja de texto para el DNI -->
+                <Entry x:Name="RucEntry" Placeholder="RUC" IsVisible="False" />
+                <!-- Caja de texto para el nombre -->
+                <Entry x:Name="nombreEntry" Placeholder="Nombre" />
+
+                <!-- Caja de texto para la dirección -->
+                <Entry x:Name="direccionEntry" Placeholder="Dirección" />
+                <!-- Caja de texto para el monto pagado -->
+                <StackLayout Orientation="Horizontal" VerticalOptions="CenterAndExpand">
+                    <Label Text="Monto Pagado:" FontSize="Large"  VerticalOptions="CenterAndExpand" />
+                </StackLayout>
+                <StackLayout Orientation="Horizontal" VerticalOptions="CenterAndExpand">
+                    <Entry x:Name="montoPagadoEntry" FontSize="Large"  Placeholder="Ingrese el monto" Keyboard="Numeric" />
+                </StackLayout>
+                
+                <!-- Caja de texto para mostrar el vuelto -->
+                <Label x:Name="vueltoLabel"  FontSize="Large"  Text="Vuelto: 0.00" VerticalOptions="CenterAndExpand" />
+                <StackLayout Orientation="Horizontal" VerticalOptions="CenterAndExpand">
+                    <Label Text="Total:" FontSize="Large"  VerticalOptions="CenterAndExpand" />
+                </StackLayout>
+                <Label x:Name="labelTotal2"  Margin="50,15,50,15" Text="{Binding TotalPreciosSeleccionadosGeneral, StringFormat='Total: {0:S/.}'}" HorizontalOptions="CenterAndExpand" FontSize="Large" />
+                <Button Text="Guardar" FontSize="Medium" Clicked="CerrarPopupFinalizaVenta" />
+            </StackLayout>
+        </ContentView>
+
+        <StackLayout Orientation="Horizontal">
+            <Button x:Name="btnAgregar" Text="Agregar Producto" Clicked="AgregarProducto_Clicked" 
+            HorizontalOptions="Start" VerticalOptions="Start"
+            Margin="15,10,0,0" FontSize="Micro"/>
+
+            <!-- Este espacio en blanco es solo para dar un espacio entre los botones -->
+            <!--<BoxView WidthRequest="10" BackgroundColor="Red" />-->
+
+            <Button x:Name="btnScan" FontSize="Micro"  Text="Escanear Código" Clicked="EscanearCodigoBarras_Clicked" 
+            HorizontalOptions="End" VerticalOptions="Start"
+            Margin="10,10,10,0" />
+        </StackLayout>
+
+        <ListView x:Name="listaProductosListView" HasUnevenRows="True"  CachingStrategy="RecycleElement" >
+            <ListView.ItemTemplate>
+                <DataTemplate>
+
+
+                    <ViewCell>
+                        <ViewCell.ContextActions>
+                            <MenuItem Text="Eliminar" Clicked="EliminarMenuItem_Clicked" CommandParameter="{Binding .}" />
+                        </ViewCell.ContextActions>
+
+                        <!-- Contenido del elemento de la lista (tu diseño actual) -->
+                        <Frame Padding="10" BorderColor="#808080"  BackgroundColor="{Binding RowColor}" HasShadow="False"   Margin="15,10,10,10" >
+                            <!--<Frame.Triggers>
+                                <DataTrigger TargetType="Frame" Binding="{Binding OddRow}" Value="True">
+                                    <Setter Property="BackgroundColor" Value="#808080" />
+                                </DataTrigger>
+                                <DataTrigger TargetType="Frame" Binding="{Binding EvenRow}" Value="True">
+                                    <Setter Property="BackgroundColor" Value="White" />
+                                </DataTrigger>
+                            </Frame.Triggers>-->
+                            <Grid Padding="10"  >
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <!-- Nombre del producto -->
+                                <Label FontSize="Micro" Text="{Binding Nombre}" VerticalOptions="Start" Margin="0,0,0,30" />
+                                <StackLayout Orientation="Horizontal" VerticalOptions="Center">
+                                    <!-- Primer StackLayout -->
+                                    <StackLayout Orientation="Horizontal" VerticalOptions="Center">
+                                        <Label FontSize="9" Text="Cant:   " VerticalOptions="Center"/>
+                                        <Entry FontSize="9" Text="{Binding Cantidad}" Keyboard="Numeric" WidthRequest="60" VerticalOptions="CenterAndExpand" />
+                                        <Label FontSize="9" Text="P.May:" Margin="50,0,0,0" VerticalOptions="Center"/>
+                                        <Label FontSize="9" Text="{Binding Precio2}" VerticalOptions="Center" Margin="0,0,0,0"/>
+                                        <CheckBox IsVisible="false" IsChecked="{Binding Precio2Seleccionado}" VerticalOptions="Center" IsEnabled="False"  Margin="0,0,0,0"/>
+
+                                    </StackLayout>
+
+                                    <!-- Segundo StackLayout -->
+                                    <StackLayout Orientation="Horizontal" Spacing="5" VerticalOptions="Center">
+                                        <Label FontSize="9" Text="{Binding PrecioTotal, StringFormat='Total: {0:S/. }'}" VerticalOptions="Center" Margin="30,0,0,0"/>
+                                    </StackLayout>
+                                </StackLayout>
+                                <!-- Cantidad -->
+                                <!--<StackLayout Orientation="Horizontal" VerticalOptions="Center">
+                                    --><!-- ... Otros controles ... --><!--
+                                    <Label FontSize="Micro" Text="Cant:   " VerticalOptions="Center"/>
+                                    --><!--<Button Text="-" FontSize="Micro" WidthRequest="15" HeightRequest="15" Command="{Binding RestarCantidadCommand}" CornerRadius="5" BackgroundColor="#3498db" TextColor="White"/>--><!--
+                                    <Entry FontSize="Micro" Text="{Binding Cantidad}" Keyboard="Numeric" WidthRequest="60" VerticalOptions="CenterAndExpand" />
+                                    --><!--<Button Text="+" FontSize="Header" WidthRequest="15" HeightRequest="15" Command="{Binding SumarCantidadCommand}" CornerRadius="5" BackgroundColor="#3498db" TextColor="White"/>-->
+                                    <!-- Nuevo Label para mostrar el precio total --><!--
+                                    <Label FontSize="Micro" Text="{Binding PrecioTotal, StringFormat='Total: {0:S/. }'}" VerticalOptions="Center" Margin="30,0,0,0"/>
+                                </StackLayout>-->
+                                <!-- Precios 1 y 2 -->
+                                <!--<Grid Grid.Row="3">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>-->
+
+                                    <!-- Precio Minorista -->
+                                    <!--<StackLayout Grid.Column="0" Orientation="Horizontal" Spacing="5" VerticalOptions="Center">
+                                        <Label FontSize="Micro" Text="P.Min:" VerticalOptions="Center"/>
+                                        <Label FontSize="Micro" Text="{Binding Precio1}" VerticalOptions="Center" Margin="0,0,0,0"/>
+                                        <CheckBox IsChecked="{Binding Precio1Seleccionado}" VerticalOptions="Center" IsEnabled="False"  Margin="0,0,0,0"/>
+                                    </StackLayout>-->
+
+                                    <!-- Precio Minorista -->
+                                    <!--<StackLayout Grid.Column="1" Orientation="Horizontal" Spacing="5" VerticalOptions="Center">
+                                    <Label FontSize="Micro" Text="P.May:" VerticalOptions="Center"/>
+                                    <Label FontSize="Micro" Text="{Binding Precio2}" VerticalOptions="Center" Margin="0,0,0,0"/>
+                                    <CheckBox IsChecked="{Binding Precio2Seleccionado}" VerticalOptions="Center" Margin="0,0,0,0"/>
+                                </StackLayout>-->
+                                <!--</Grid>-->
+
+                                <!--<VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="AlternatingRowStates">
+                                    <VisualState x:Name="EvenRow">
+                                        <VisualState.Setters>
+                                            <Setter Property="BackgroundColor" Value="#808080"/>
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="OddRow">
+                                        <VisualState.Setters>
+                                            <Setter Property="BackgroundColor" Value="#808080"/>
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>-->
+                            </Grid>
+                        </Frame>
+                        <!-- Contenido del elemento de la lista (tu diseño actual) -->
+                        <!--<BindableLayout.ItemTemplate>
+                            <DataTemplate>
+                                <Frame Padding="10" BorderColor="#808080" HasShadow="False" BackgroundColor="{Binding RowColor}">
+                                    <Grid>
+                                        -->
+                        <!-- ... Contenido del Grid ... -->
+                        <!--
+                                    </Grid>
+                                </Frame>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>-->
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+        <!-- Etiqueta labelTotal -->
+        <Label x:Name="labelTotal" Margin="50,15,50,15" Text="{Binding TotalPreciosSeleccionadosGeneral, StringFormat='Total: {0:S/.}'}" HorizontalOptions="CenterAndExpand" FontSize="25"/>
+        <Button x:Name="finalizarVentaButton" Text="Finalizar Venta"   Margin="50,0,50,15" FontSize="Medium" Clicked="FinalizarVenta_Clicked" />
+    </StackLayout>
+</ContentPage>
