@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="LoginApp.Maui.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:LoginApp.Maui"
+    xmlns:views="clr-namespace:LoginApp.Maui.Views"
+    xmlns:models="clr-namespace:LoginApp.Maui.Models"
+    Shell.TabBarIsVisible="False">
+
+    <!-- Página de inicio -->
+    <ShellContent
+        Title="MENU"
+        ContentTemplate="{DataTemplate local:LoginPage}"
+        FlyoutItemIsVisible="False"
+        Shell.FlyoutBehavior="Disabled"
+        Route="LoginPage"/>
+
+    <!-- Menú lateral -->
+    <FlyoutItem Route="HomePage" FlyoutDisplayOptions="AsMultipleItems">
+
+        <ShellContent Title="Venta por Mayor" ContentTemplate="{DataTemplate views:VentaRapidaMayPage}">
+            
+        </ShellContent>
+
+        <ShellContent Title="Venta por Unidad" ContentTemplate="{DataTemplate views:VentaRapidaPage}">
+            
+        </ShellContent>
+        <!--<ShellContent Title="Acerca de"  ContentTemplate="{DataTemplate views:AboutPage}"/>-->
+    </FlyoutItem>
+
+    <!-- Pie de página del menú lateral -->
+    <Shell.FlyoutFooter>
+        <StackLayout Padding="20">
+            <Button Text="Cerrar Sesión" Command="{Binding SignOutCommand}" BackgroundColor="IndianRed" TextColor="White"/>
+        </StackLayout>
+    </Shell.FlyoutFooter>
+</Shell>
