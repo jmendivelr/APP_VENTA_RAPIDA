@@ -85,7 +85,7 @@
                         </ViewCell.ContextActions>
 
                         <!-- Contenido del elemento de la lista (tu diseño actual) -->
-                        <Frame Padding="10" BorderColor="#808080"  BackgroundColor="{Binding RowColor}" HasShadow="False"   Margin="15,10,10,10" >
+                        <Frame Padding="10" BorderColor="#C0C0C0"  BackgroundColor="{Binding RowColor}" HasShadow="False"   Margin="15,10,10,10" >
                             <!--<Frame.Triggers>
                                 <DataTrigger TargetType="Frame" Binding="{Binding OddRow}" Value="True">
                                     <Setter Property="BackgroundColor" Value="#808080" />
@@ -103,22 +103,22 @@
                             </Grid.RowDefinitions>
 
                             <!-- Nombre del producto -->
-                            <Label FontSize="Micro" Text="{Binding Nombre}" VerticalOptions="Start" Margin="0,0,0,30" />
+                                <Label FontSize="15" Text="{Binding Nombre}" VerticalOptions="Start" Margin="0,0,0,30" />
                                 <StackLayout Orientation="Horizontal" VerticalOptions="Center">
                                     <!-- Primer StackLayout -->
                                     <StackLayout Orientation="Horizontal" VerticalOptions="Center">
-                                        <Label FontSize="9" Text="Cant:   " VerticalOptions="Center"/>
-                                        <Entry FontSize="Micro" Text="{Binding Cantidad}" Keyboard="Numeric" WidthRequest="60" VerticalOptions="CenterAndExpand" />
-                                        <Label FontSize="9" Text="P.Min:" Margin="50,0,0,0" VerticalOptions="Center"/>
-                                        <Label FontSize="9" Text="{Binding Precio1}" VerticalOptions="Center" Margin="0,0,0,0"/>
+                                        <Label FontSize="14" Text="Cant:   " VerticalOptions="Center"/>
+                                        <Entry FontSize="14" Text="{Binding Cantidad}" Keyboard="Numeric" WidthRequest="45" VerticalOptions="CenterAndExpand" />
+                                        <Label FontSize="14" Text="P.Min:" Margin="45,0,0,0" VerticalOptions="Center"/>
+                                        <Label FontSize="14" Text="{Binding Precio1}" VerticalOptions="Center" Margin="0,0,0,0"/>
                                         <CheckBox IsVisible="false" IsChecked="{Binding Precio1Seleccionado}" VerticalOptions="Center" IsEnabled="False"  Margin="0,0,0,0"/>
-
+                                        <Label FontSize="14" Text="{Binding PrecioTotal, StringFormat='Total: {0:S/. }'}" VerticalOptions="Center" Margin="15,0,0,0"/>
                                     </StackLayout>
 
                                     <!-- Segundo StackLayout -->
-                                    <StackLayout Orientation="Horizontal" Spacing="5" VerticalOptions="Center">
-                                        <Label FontSize="9" Text="{Binding PrecioTotal, StringFormat='Total: {0:S/. }'}" VerticalOptions="Center" Margin="30,0,0,0"/>
-                                    </StackLayout>
+                                    <!--<StackLayout Orientation="Horizontal" Spacing="5" VerticalOptions="Center">
+                                        
+                                    </StackLayout>-->
                                 </StackLayout>
                                 <!-- Cantidad -->
                             <!--<StackLayout Orientation="Horizontal" VerticalOptions="Center">

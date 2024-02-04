@@ -51,6 +51,23 @@ public partial class VentaRapidaPage : ContentPage
         tipoDocumentoPicker.SelectedIndexChanged += TipoDocumentoPicker_SelectedIndexChanged;
         // Establece el índice inicial (0 para DNI)
         tipoDocumentoPicker.SelectedIndex = 0;
+        tipoDocumentoPicker.SelectedIndexChanged += (sender, e) =>
+        {
+            // Limpiar los campos de entrada según la selección del Picker
+            int selectedIndex = tipoDocumentoPicker.SelectedIndex;
+            if (selectedIndex == 0) // DNI seleccionado
+            {
+                dniEntry.Text = ""; // Limpiar el campo de DNI
+                RucEntry.Text = ""; // Limpiar el campo de RUC
+            }
+            else if (selectedIndex == 1) // RUC seleccionado
+            {
+                RucEntry.Text = ""; // Limpiar el campo de RUC
+                dniEntry.Text = ""; // Limpiar el campo de DNI
+            }
+        };
+
+
 
         // Asegúrate de que el evento se ejecute al inicio para mostrar la caja de texto correcta
         TipoDocumentoPicker_SelectedIndexChanged(null, EventArgs.Empty);
@@ -499,30 +516,56 @@ public partial class VentaRapidaPage : ContentPage
 
         // Deserializar la respuesta JSON
         var respuesta = JsonConvert.DeserializeObject<RespuestaVenta>(respuestaJson);
-        string mensaje = $"Tipo de documento: {respuesta.result.tpd}\nSerie: {respuesta.result.serie_doc}\nNúmero de documento: {respuesta.result.numero_doc}";
+        string mensaje = $"{respuesta.result.tpd} - {respuesta.result.serie_doc} - {respuesta.result.numero_doc}";
         Console.WriteLine(mensaje);
-        MostrarMensaje(mensaje);
+        //MostrarMensaje(mensaje);
 
         // URL del servicio que genera el PDF
         // URL del servicio que genera el PDF
         if(respuesta.status == "ok")
         {
-            string pdfUrl = $"https://ventarapida-dms.000webhostapp.com/crearpdf?tpd={respuesta.result.tpd}&serieDoc={respuesta.result.serie_doc}&numeroDoc={respuesta.result.numero_doc}";
+            
 
-            // Download the PDF file to a local path
-            string localFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "downloaded.pdf");
+            //// Download the PDF file to a local path
+            //string localFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "downloaded.pdf");
 
-            using (HttpClient client = new HttpClient())
+            //using (HttpClient client = new HttpClient())
+            //{
+            //    byte[] pdfData = await client.GetByteArrayAsync(pdfUrl);
+            //    File.WriteAllBytes(localFilePath, pdfData);
+            //}
+
+            //// Open the local PDF file
+            //Microsoft.Maui.ApplicationModel.Launcher.OpenAsync(new Microsoft.Maui.ApplicationModel.OpenFileRequest
+            //{
+            //    File = new Microsoft.Maui.Storage.ReadOnlyFile(localFilePath, "application/pdf")
+            //});
+            await imprimir(respuesta.result.tpd, respuesta.result.serie_doc, respuesta.result.numero_doc);
+
+            string action;
+            do
             {
-                byte[] pdfData = await client.GetByteArrayAsync(pdfUrl);
-                File.WriteAllBytes(localFilePath, pdfData);
-            }
+                action = await App.Current.MainPage.DisplayActionSheet(mensaje, "Aceptar", null, "Reimprimir");
 
-            // Open the local PDF file
-            Microsoft.Maui.ApplicationModel.Launcher.OpenAsync(new Microsoft.Maui.ApplicationModel.OpenFileRequest
-            {
-                File = new Microsoft.Maui.Storage.ReadOnlyFile(localFilePath, "application/pdf")
-            });
+                switch (action)
+                {
+                    case "Aceptar":
+                        // Código para la acción "Aceptar"
+                        // Aquí puedes poner lo que quieres que ocurra cuando se selecciona "Aceptar"
+                        // Puede ser alguna lógica adicional o simplemente salir del bucle
+                        break;
+                    case "Reimprimir":
+                        // Código para la acción "Reimprimir"
+                        // Aquí puedes poner lo que quieres que ocurra cuando se selecciona "Reimprimir"
+                        await imprimir(respuesta.result.tpd, respuesta.result.serie_doc, respuesta.result.numero_doc);
+                        break;
+                    default:
+                        // Código para otras opciones o cancelar
+                        // Puedes manejar casos adicionales aquí
+                        break;
+                }
+
+            } while (action != "Aceptar");
 
 
         }
@@ -534,6 +577,29 @@ public partial class VentaRapidaPage : ContentPage
         }
         CancelarPoputFinaliza();
     }
+
+    private async Task imprimir(string tpd,string serie_doc,string numero_doc)
+    {
+        // Código para reimprimir el PDF
+        string pdfUrl = $"https://ventarapida-dms.000webhostapp.com/crearpdf?tpd={tpd}&serieDoc={serie_doc}&numeroDoc={numero_doc}";
+
+        // Download the PDF file to a local path
+        string localFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "downloaded.pdf");
+
+        using (HttpClient client = new HttpClient())
+        {
+            byte[] pdfData = await client.GetByteArrayAsync(pdfUrl);
+            File.WriteAllBytes(localFilePath, pdfData);
+        }
+
+        // Open the local PDF file
+        await Microsoft.Maui.ApplicationModel.Launcher.OpenAsync(new Microsoft.Maui.ApplicationModel.OpenFileRequest
+        {
+            File = new Microsoft.Maui.Storage.ReadOnlyFile(localFilePath, "application/pdf")
+        });
+    }
+
+
     private void MostrarMensaje(string mensaje)
     {
         // Utilizar DisplayAlert para mostrar el mensaje en el móvil
@@ -627,7 +693,7 @@ public partial class VentaRapidaPage : ContentPage
                     bool isOddRow = true;
                     foreach (var producto in listaProductos)
                     {
-                        producto.RowColor = isOddRow ? Colors.Gray : Colors.White;
+                        producto.RowColor = isOddRow ? Colors.Silver : Colors.White;
                         isOddRow = !isOddRow;
                     }
                     ActualizarTotalCantidades(); // Actualizar el total después de agregar un producto
@@ -700,7 +766,7 @@ public partial class VentaRapidaPage : ContentPage
                     bool isOddRow = true;
                     foreach (var producto in listaProductos)
                     {
-                        producto.RowColor = isOddRow ? Colors.Gray : Colors.White;
+                        producto.RowColor = isOddRow ? Colors.Silver : Colors.White;
                         isOddRow = !isOddRow;
                     }
                     ActualizarTotalCantidades(); // Actualizar el total después de agregar un producto
