@@ -1,2 +1,2 @@
 # APP_VENTA_RAPIDA
-App de venta Rápida - api - PHP
+App de venta Rápida -.NET MAUI - api PHP
